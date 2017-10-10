@@ -1,2 +1,2 @@
 include LICENSE.txt
-recursive-include data *
+recursive-include cr_py *
