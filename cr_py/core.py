@@ -35,7 +35,8 @@ class Profile:
     @property
     def data(self):
         with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
-            return data = json.loads(url.read().decode())
+            data = json.loads(url.read().decode())
+        return data
 
     @property
     def name(self):
