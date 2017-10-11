@@ -1,15 +1,10 @@
 from setuptools import setup, find_packages
-from codecs import open
-from os import path
-here = path.abspath(path.dirname(__file__))
-with open(path.join(here, 'README.md'), encoding='utf-8') as f:
-    long_description = f.read()
 
 setup(
     name='cr-py',
-    version='0.1.0',
+    version='0.1.1',
     description='A Python API wrapper for cr-api',
-    long_description=long_description,
+    long_description='A Python API wrapper for cr-api',
     url='https://github.com/kwugfighter/cr-py',
     author='kwugfighter',
     author_email='isaacli430@gmail.com',
