@@ -25,7 +25,7 @@ class Arena:
 
     @property
     def img_url(self):
-        return "http://api.cr-api.com/arena/{}.png".format(self.number.replace(" ", "").lower())
+        return "http://api.cr-api.com/arena/{0}.png".format(self.number.replace(" ", "").lower())
 
 class Profile:
 
@@ -34,7 +34,7 @@ class Profile:
 
     @property
     def data(self):
-        with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
+        with urllib.request.urlopen("http://api.cr-api.com/profile/{0}".format(self.tag)) as url:
             return json.loads(url.read().decode())
 
     @property
@@ -132,6 +132,64 @@ class Profile:
     def tournament_games(self):
         return self.data['games']['tournamentGames']
 
+    @property
+    def wins(self):
+        return self.data['games']['wins']
+
+    @property
+    def losses(self):
+        return self.data['games']['losses']
+
+    @property
+    def draws(self):
+        return self.data['games']['draws']
+
+    @property
+    def win_streak(self):
+        if self.data['games']['currentWinStreak'] < 0:
+            return 0
+        else:
+            return self.data['games']['currentWinStreak']
+
+    @property
+    def chest_pos(self):
+        return self.data['chestCycle']['chest_position']
+
+    @property
+    def smc_pos(self):
+        return self.data['chestCycle']['superMagicalPos']
+
+    @property
+    def leg_pos(self):
+        return self.data['chestCycle']['legendaryPos']
+
+    @property
+    def epic_pos(self):
+        return self.data['chestCycle']['epicPos']
+
+    @property
+    def leg_shop(self):
+        return self.data['shopOffers']['legendary']
+
+    @property
+    def epic_shop(self):
+        return self.data['shopOffers']['epic']
+
+    @property
+    def arena_offer(self):
+        return self.data['shopOffers']['arena']
+
+    @property
+    def deck(self)
+        deck = []
+        for card in self.data['currentDeck']:
+            card_name = card.name.replace("_", "-")
+            if card_name == "x-bow":
+                deck.append((Card(key="bow"), card.level))
+            else:
+                deck.append((Card(key=card_name), card.level))
+        return deck
+
 class Clan:
 
     def __init__(self, **tag: str):
@@ -139,10 +197,127 @@ class Clan:
 
     @property
     def data(self):
-        with urllib.request.urlopen("http://api.cr-api.com/clan/{}".format(self.tag)) as url:
+        with urllib.request.urlopen("http://api.cr-api.com/clan/{0}".format(self.tag)) as url:
             return json.loads(url.read().decode())
 
     @property
     def members(self):
         return [Profile(tag=x['tag']) for x in self.data['members']]
 
+    @property
+    def name(self):
+        return self.data['name']
+
+    @property
+    def badge_url(self):
+        return "api.cr-api.com/{0}".format(self.data['badge']['url'])
+
+    @property
+    def type(self):
+        return self.data['typeName']
+
+    @property
+    def member_count(self):
+        return self.data['memberCount']
+
+    @property
+    def trophies(self):
+        return self.data['score']
+
+    @property
+    def required_trophies(self):
+        return self.data['requiredScore']
+
+    @property
+    def donations(self):
+        return self.data['donations']
+
+    @property
+    def rank(self):
+        if self.data['currentRank'] == 0:
+            return None
+        return self.data['currentRank']
+
+    @property
+    def description(self):
+        return self.data['description']
+
+    @property
+    def region(self):
+        return self.data['region']['name']
+
+    @property
+    def clan_chest_trophies(self):
+        return self.data['clanChest']['clanChestCrowns']
+
+    @property
+    def cc_finished_percent(self):
+        return self.data['clanChest']['clanChestCrownsPercent']*100
+
+class Card:
+
+    def __init__(self, **key: str):
+        self.key = key
+
+    @property
+    def data(self):
+        with urllib.request.urlopen("https://raw.githubusercontent.com/smlbiobot/cr-api-data/master/dst/cards.json") as url:
+            data = json.loads(url.read().decode())
+        for test_card in data:
+            if self.key == test_card['key']:
+                return test_card
+        return None
+
+    @property
+    def exists(self):
+        if self.data == None:
+            return False
+        return True
+
+    @property
+    def name(self):
+        if self.data == None:
+            return None
+        return self.data['name']
+
+    @property
+    def elixir(self):
+        if self.data == None:
+            return None
+        return self.data['elixir']
+
+    @property
+    def type(self):
+        if self.data == None:
+            return None
+        return self.data['type']
+
+    @property
+    def rarity(self):
+        if self.data == None:
+            return None
+        return self.data['rarity']
+
+    @property
+    def arena_found(self):
+        if self.data == None:
+            return None
+        return self.data['arena']
+
+    @property
+    def description(self):
+        if self.data == None:
+            return None
+        return self.data['description']
+
+    @property
+    def card_id(self):
+        if self.data == None:
+            return None
+        return self.data['decklink']
+
+    @property
+    def img_url(self):
+        if self.data == None:
+            return None
+        return "https://raw.githubusercontent.com/cr-api/cr-api-assets/master/card/{0}.png".format(self.key)

@@ -1,8 +1,8 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='cr-py',
-    version='0.1.3',
+    version='0.1.4',
     description='A Python API wrapper for cr-api (WIP)',
     long_description='A Python API wrapper for cr-api (WIP)',
     url='https://github.com/kwugfighter/cr.py',
@@ -18,6 +18,7 @@ setup(
 
         'License :: OSI Approved :: MIT License',
 
+        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.3',
         'Programming Language :: Python :: 3.4',
