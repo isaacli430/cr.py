@@ -2,10 +2,10 @@ from setuptools import setup, find_packages
 
 setup(
     name='cr-py',
-    version='0.1.1',
-    description='A Python API wrapper for cr-api',
-    long_description='A Python API wrapper for cr-api',
-    url='https://github.com/kwugfighter/cr-py',
+    version='0.1.3',
+    description='A Python API wrapper for cr-api (WIP)',
+    long_description='A Python API wrapper for cr-api (WIP)',
+    url='https://github.com/kwugfighter/cr.py',
     author='kwugfighter',
     author_email='isaacli430@gmail.com',
     license='MIT',
