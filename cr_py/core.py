@@ -212,6 +212,27 @@ class Profile:
             else:
                 return self.data['games']['currentWinStreak']
 
+    class Seasons:
+
+        def __init__(self, data, number):
+            self.data = data
+
+        @property
+        def number(self):
+            return self.data['seasonNumber']
+
+        @property
+        def highest(self):
+            return self.data['seasonHighest']
+
+        @property
+        def finish(self):
+            return self.data['seasonHighest']
+
+        @property
+        def global_ranking(self):
+            return self.data['seasonEndGlobalRank']
+
     @property
     def cycles(self):
         if not self.exists:
@@ -241,6 +262,12 @@ class Profile:
         if not self.exists:
             return None
         return self.Games(self.data)
+
+    @property
+    def seasons(self):
+        if not self.exists:
+            return None
+        return [self.Season(season) for season in self.data['previousSeasons']]
 
     @property
     def name(self):
