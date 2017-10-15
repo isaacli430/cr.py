@@ -1,18 +1,40 @@
+"""
+Copyright (c) 2017 kwugfighter
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of
+this software and associated documentation files (the "Software"), to deal in
+the Software without restriction, including without limitation the rights to
+use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+of the Software, and to permit persons to whom the Software is furnished to do
+so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+"""
+
 import json, urllib.request
 
 class Arena:
 
     def __init__(self, arena_id: int):
         self.arena_id = arena_id
-
-    @property
-    def data(self):
         with urllib.request.urlopen("http://api.cr-api.com/constants") as url:
             data = json.loads(url.read().decode())
+        found_arena = False
         for test_arena in data['arenas']:
             if self.arena_id == test_arena['arenaID']:
-                return test_arena
-        return None
+                self.data = test_arena
+                found_arena = True
+        if not found_arena:
+            self.data = None
 
     @property
     def exists(self):
@@ -48,13 +70,17 @@ class Profile:
 
     def __init__(self, tag: str):
         self.tag = tag
-
-    @property
-    def data(self):
         with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
             if "error" in json.loads(url.read().decode()):
-                return None
-            return json.loads(url.read().decode())
+                self.data = None
+            self.data = json.loads(url.read().decode())
+
+    @property
+    def update(self):
+        with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
+            if "error" in json.loads(url.read().decode()):
+                self.data = None
+            self.data = json.loads(url.read().decode())
 
     @property
     def exists(self):
@@ -296,19 +322,22 @@ class Clan:
 
     def __init__(self, tag: str):
         self.tag = tag
-
-    @property
-    def data(self):
         with urllib.request.urlopen("http://api.cr-api.com/clan/{}".format(self.tag)) as url:
             if "error" in json.loads(url.read().decode()):
-                return None
-            return json.loads(url.read().decode())
+                self.data = None
+            self.data = json.loads(url.read().decode())
 
     @property
     def exists(self):
         if self.data == None:
             return False
         return True
+
+    def update(self):
+        with urllib.request.urlopen("http://api.cr-api.com/clan/{}".format(self.tag)) as url:
+            if "error" in json.loads(url.read().decode()):
+                self.data = None
+            self.data = json.loads(url.read().decode())
 
     class ClanChest:
 
@@ -405,15 +434,15 @@ class Card:
 
     def __init__(self, key):
         self.key = key
-
-    @property
-    def data(self):
         with urllib.request.urlopen("https://raw.githubusercontent.com/smlbiobot/cr-api-data/master/dst/cards.json") as url:
             data = json.loads(url.read().decode())
+        card_found = False
         for test_card in data:
             if self.key == test_card['key']:
-                return test_card
-        return None
+                self.data = test_card
+                card_found = True
+        if not card_found:
+            self.data = None
 
     @property
     def exists(self):
