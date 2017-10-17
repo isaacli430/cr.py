@@ -20,14 +20,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import json, urllib.request
+import json, requests
 
 class Arena:
 
     def __init__(self, arena_id: int):
         self.arena_id = arena_id
-        with urllib.request.urlopen("http://api.cr-api.com/constants") as url:
-            data = json.loads(url.read().decode())
+        data = requests.get("http://api.cr-api.com/constants").json()
         found_arena = False
         for test_arena in data['arenas']:
             if self.arena_id == test_arena['arenaID']:
@@ -38,7 +37,7 @@ class Arena:
 
     @property
     def exists(self):
-        if data == None:
+        if self.data == None:
             return False
         return True
 
@@ -70,17 +69,17 @@ class Profile:
 
     def __init__(self, tag: str):
         self.tag = tag
-        with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
-            if "error" in json.loads(url.read().decode()):
-                self.data = None
-            self.data = json.loads(url.read().decode())
+        json = requests.get("http://api.cr-api.com/profile/{}".format(self.tag)).json()
+        if "error" in json:
+            self.data = None
+        self.data = json
 
     @property
     def update(self):
-        with urllib.request.urlopen("http://api.cr-api.com/profile/{}".format(self.tag)) as url:
-            if "error" in json.loads(url.read().decode()):
-                self.data = None
-            self.data = json.loads(url.read().decode())
+        json = requests.get("http://api.cr-api.com/profile/{}".format(self.tag)).json()
+        if "error" in json:
+            self.data = None
+        self.data = json
 
     @property
     def exists(self):
@@ -339,20 +338,17 @@ class Profile:
         deck = []
         for card in self.data['currentDeck']:
             card_name = card.name.replace("_", "-")
-            if card_name == "x-bow":
-                deck.append((Card("bow"), card.level))
-            else:
-                deck.append((Card(card_name), card.level))
+            deck.append((Card(card_name), card.level))
         return deck
 
 class Clan:
 
     def __init__(self, tag: str):
         self.tag = tag
-        with urllib.request.urlopen("http://api.cr-api.com/clan/{}".format(self.tag)) as url:
-            if "error" in json.loads(url.read().decode()):
-                self.data = None
-            self.data = json.loads(url.read().decode())
+        data = requests.get("http://api.cr-api.com/clan/{}".format(self.tag)).json()
+        if "error" in data:
+            self.data = None
+        self.data = data
 
     @property
     def exists(self):
@@ -361,10 +357,10 @@ class Clan:
         return True
 
     def update(self):
-        with urllib.request.urlopen("http://api.cr-api.com/clan/{}".format(self.tag)) as url:
-            if "error" in json.loads(url.read().decode()):
-                self.data = None
-            self.data = json.loads(url.read().decode())
+        data = requests.get("http://api.cr-api.com/clan/{}".format(self.tag)).json()
+        if "error" in data:
+            self.data = None
+        self.data = data
 
     class ClanChest:
 
@@ -383,6 +379,10 @@ class Clan:
         def finished_percent(self):
             return self.data['clanChest']['clanChestCrownsPercent']*100
 
+        @property
+        def contributions(self):
+            return [(i['name'], i['clanChestCrowns']) for i in self.data['members']]
+
     class Trophies:
 
         def __init__(self, data):
@@ -395,6 +395,10 @@ class Clan:
         @property
         def requirement(self):
             return self.data['requiredScore']
+
+        @property
+        def players(self):
+            return [(i['name'], i['trophies']) for i in self.data['members']]
 
     @property
     def clanchest(self):
@@ -457,14 +461,15 @@ class Clan:
         return self.data['region']['name']
 
 
+
 class Card:
 
     def __init__(self, key):
         self.key = key
-        with urllib.request.urlopen("https://raw.githubusercontent.com/smlbiobot/cr-api-data/master/dst/cards.json") as url:
-            data = json.loads(url.read().decode())
+        data = requests.get("https://raw.githubusercontent.com/cr-api/cr-api-data/master/dst/cards.json").json()
         card_found = False
-        for test_card in data:
+        cards = [v for k, v in data.items()]
+        for test_card in cards:
             if self.key == test_card['key']:
                 self.data = test_card
                 card_found = True
