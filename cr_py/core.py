@@ -337,8 +337,7 @@ class Profile:
             return None
         deck = []
         for card in self.data['currentDeck']:
-            card_name = card.name.replace("_", "-")
-            deck.append((Card(card_name), card.level))
+            deck.append((Card(card.key), card.level))
         return deck
 
 class Clan:
