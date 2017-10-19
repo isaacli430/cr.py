@@ -1,1 +1,1 @@
-from .core import Profile, Clan, Arena, Card
+from .core import Profile, Clan, Arena, Card, Profiles, Clans

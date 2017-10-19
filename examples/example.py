@@ -10,3 +10,5 @@ print(card.img_url)
 clan.update()
 print(clan.trophies.current)
 print(clan.trophies.players[0][1])
+profiles = cr_py.Profiles("GYUGPLYL", "Y0JRJY").profiles
+print(profiles[0].name)

@@ -529,3 +529,13 @@ class Card:
         if not self.exists:
             return None
         return "https://raw.githubusercontent.com/cr-api/cr-api-assets/master/card/{}.png".format(self.key)
+
+class Profiles:
+
+    def __init__(self, *tags: str):
+        self.profiles = [Profile(tag) for tag in tags]
+
+class Clans:
+
+    def __init__(self, *tags: str):
+        self.clans = [Clan(tag) for tag in tags]
