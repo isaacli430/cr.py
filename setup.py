@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='cr-py',
-    version='1.1.1',
+    version='1.1.2',
     description='A Python API wrapper for cr-api',
     long_description='A Python API wrapper for cr-api',
     url='https://github.com/kwugfighter/cr.py',
@@ -24,5 +24,6 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6'
     ],
-    packages=['cr_py']
+    packages=['cr_py'],
+    install_requires=['requests']
 )
