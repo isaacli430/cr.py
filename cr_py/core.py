@@ -465,10 +465,9 @@ class Card:
 
     def __init__(self, key):
         self.key = key
-        data = requests.get("https://raw.githubusercontent.com/cr-api/cr-api-data/master/dst/cards.json").json()
+        data = requests.get("https://api.cr-api.com/constants").json()
         card_found = False
-        cards = [v for k, v in data.items()]
-        for test_card in cards:
+        for test_card in data['cards']:
             if self.key == test_card['key']:
                 self.data = test_card
                 card_found = True
