@@ -72,14 +72,16 @@ class Profile:
         json = requests.get("http://api.cr-api.com/profile/{}".format(self.tag)).json()
         if "error" in json:
             self.data = None
-        self.data = json
+        else:
+            self.data = json
 
     @property
     def update(self):
         json = requests.get("http://api.cr-api.com/profile/{}".format(self.tag)).json()
         if "error" in json:
             self.data = None
-        self.data = json
+        else:
+            self.data = json
 
     @property
     def exists(self):
@@ -347,7 +349,8 @@ class Clan:
         data = requests.get("http://api.cr-api.com/clan/{}".format(self.tag)).json()
         if "error" in data:
             self.data = None
-        self.data = data
+        else:
+            self.data = data
 
     @property
     def exists(self):
@@ -359,7 +362,8 @@ class Clan:
         data = requests.get("http://api.cr-api.com/clan/{}".format(self.tag)).json()
         if "error" in data:
             self.data = None
-        self.data = data
+        else:
+            self.data = data
 
     class ClanChest:
 
