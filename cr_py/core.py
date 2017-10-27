@@ -22,49 +22,6 @@ SOFTWARE.
 
 import json, requests
 
-class Arena:
-
-    def __init__(self, arena_id: int):
-        self.arena_id = arena_id
-        data = requests.get("http://api.cr-api.com/constants").json()
-        found_arena = False
-        for test_arena in data['arenas']:
-            if self.arena_id == test_arena['arenaID']:
-                self.data = test_arena
-                found_arena = True
-        if not found_arena:
-            self.data = None
-
-    @property
-    def exists(self):
-        if self.data == None:
-            return False
-        return True
-
-    @property
-    def number(self):
-        if not self.exists:
-            return None
-        return self.data['arena']
-
-    @property
-    def name(self):
-        if not self.exists:
-            return None
-        return self.data['name']
-
-    @property
-    def trophies_required(self):
-        if not self.exists:
-            return None
-        return self.data['trophyLimit']
-
-    @property
-    def img_url(self):
-        if not self.exists:
-            return None
-        return "http://api.cr-api.com/arena/{}.png".format(self.number.replace(" ", "").lower())
-
 class Profile:
 
     def __init__(self, tag: str):
@@ -92,147 +49,57 @@ class Profile:
     class Cycles:
 
         def __init__(self, data):
-            self.data = data
-
-        @property
-        def chest_pos(self):
-            return self.data['chestCycle']['chest_position']
-
-        @property
-        def smc_pos(self):
-            return self.data['chestCycle']['superMagicalPos']
-
-        @property
-        def leg_pos(self):
-            return self.data['chestCycle']['legendaryPos']
-
-        @property
-        def epic_pos(self):
-            return self.data['chestCycle']['epicPos']
-
-        @property
-        def leg_shop(self):
-            return self.data['shopOffers']['legendary']
-
-        @property
-        def epic_shop(self):
-            return self.data['shopOffers']['epic']
-
-        @property
-        def arena_shop(self):
-            return self.data['shopOffers']['arena']
+            self.chest_pos = data['chestCycle']['chest_position']
+            self.smc_pos = data['chestCycle']['superMagicalPos']
+            self.leg_pos = data['chestCycle']['legendaryPos']
+            self.epic_pos = data['chestCycle']['epicPos']
+            self.leg_shop = data['shopOffers']['legendary']
+            self.epic_shop = data['shopOffers']['epic']
+            self.arena_shop = data['shopOffers']['arena']
 
     class XP:
 
         def __init__(self, data):
-            self.data = data
-
-        @property
-        def current(self):
-            return self.data['experience']['xp']
-
-        @property
-        def required(self):
-            return self.data['experience']['xpRequiredForLevelUp']
-
-        @property
-        def remaining(self):
-            return self.data['experience']['xpToLevelUp']
+            self.current = data['experience']['xp']
+            self.required = data['experience']['xpRequiredForLevelUp']
+            self.remaining = data['experience']['xpToLevelUp']
 
     class Trophies:
 
         def __init__(self, data):
-            self.data = data
-
-        @property
-        def current(self):
-            return self.data['trophies']
-
-        @property
-        def record(self):
-            return self.data['stats']['maxTrophies']
-
-        @property
-        def legendary(self):
-            return self.data['legendaryTrophies']
+            self.current = data['trophies']
+            self.record = data['stats']['maxTrophies']
+            self.legendary = data['legendaryTrophies']
 
     class Cards:
 
         def __init__(self, data):
-            self.data = data
-
-        @property
-        def found(self):
-            return self.data['stats']['cardsFound']
-
-        @property
-        def tournament(self):
-            return self.data['stats']['tournamentCardsWon']
-
-        @property
-        def favorite(self):
-            return Card(key=self.data['stats']['favoriteCard'])
-
-        @property
-        def challenge(self):
-            return self.data['stats']['challengeCardsWon']
+            self.found = data['stats']['cardsFound']
+            self.tournament = data['stats']['tournamentCardsWon']
+            self.favorite = Constants().card[self.data['stats']['favoriteCard']]
+            self.challenge = data['stats']['challengeCardsWon']
 
     class Games:
 
         def __init__(self, data):
-            self.data = data
-
-        @property
-        def total_games(self):
-            return self.data['games']['total']
-
-        @property
-        def tournament_games(self):
-            return self.data['games']['tournamentGames']
-
-        @property
-        def wins(self):
-            return self.data['games']['wins']
-
-        @property
-        def losses(self):
-            return self.data['games']['losses']
-
-        @property
-        def draws(self):
-            return self.data['games']['draws']
-
-        @property
-        def three_crowns(self):
-            return self.data['stats']['threeCrownWins']
-
-        @property
-        def win_streak(self):
-            if self.data['games']['currentWinStreak'] < 0:
-                return 0
+            self.total = data['games']['total']
+            self.tournament = data['games']['tournamentGames']
+            self.wins = data['games']['wins']
+            self.losses = data['games']['losses']
+            self.draws = data['games']['draws']
+            self.three_crowns = data['stats']['threeCrownWins']
+            if data['games']['currentWinStreak'] < 0:
+                self.win_streak = 0
             else:
-                return self.data['games']['currentWinStreak']
+                self.win_streak = data['games']['currentWinStreak']
 
     class Seasons:
 
-        def __init__(self, data, number):
-            self.data = data
-
-        @property
-        def number(self):
-            return self.data['seasonNumber']
-
-        @property
-        def highest(self):
-            return self.data['seasonHighest']
-
-        @property
-        def finish(self):
-            return self.data['seasonHighest']
-
-        @property
-        def global_ranking(self):
-            return self.data['seasonEndGlobalRank']
+        def __init__(self, data):
+            self.number = data['seasonNumber']
+            self.highest = data['seasonHighest']
+            self.finish = data['seasonEnding']
+            self.global_ranking = data['seasonEndGlobalRank']
 
     @property
     def cycles(self):
@@ -280,7 +147,7 @@ class Profile:
     def arena(self):
         if not self.exists:
             return None
-        return Arena(arena_id=self.data['arena']['arenaID'])
+        return Constants().arena[self.data['arena']['arenaID']]
 
     @property
     def name_changed(self):
@@ -339,7 +206,7 @@ class Profile:
             return None
         deck = []
         for card in self.data['currentDeck']:
-            deck.append((Card(card.key), card.level))
+            deck.append((Constants().card[card['key']], card['level']))
         return deck
 
 class Clan:
@@ -369,39 +236,18 @@ class Clan:
 
         def __init__(self, data):
             self.data = data
-
-        @property
-        def required(self):
-            return self.data['clanChest']['clanChestCrownsRequired']
-
-        @property
-        def crowns(self):
-            return self.data['clanChest']['clanChestCrowns']
-
-        @property
-        def finished_percent(self):
-            return self.data['clanChest']['clanChestCrownsPercent']*100
-
-        @property
-        def contributions(self):
-            return [(i['name'], i['clanChestCrowns']) for i in self.data['members']]
+            self.required = data['clanChest']['clanChestCrownsRequired']
+            self.crowns = data['clanChest']['clanChestCrowns']
+            self.finished_percent = data['clanChest']['clanChestCrownsPercent']*100
+            self.contributions = [(i['name'], i['clanChestCrowns']) for i in self.data['members']]
 
     class Trophies:
 
         def __init__(self, data):
             self.data = data
-
-        @property
-        def current(self):
-            return self.data['score']
-
-        @property
-        def requirement(self):
-            return self.data['requiredScore']
-
-        @property
-        def players(self):
-            return [(i['name'], i['trophies']) for i in self.data['members']]
+            self.current = data['score']
+            self.requirement = data['requiredScore']
+            self.players = [(i['name'], i['trophies']) for i in self.data['members']]
 
     @property
     def clanchest(self):
@@ -419,7 +265,7 @@ class Clan:
     def members(self):
         if not self.exists:
             return None
-        return [Profile(x['tag']) for x in self.data['members']]
+        return [(x['name'], x['tag']) for x in self.data['members']]
 
     @property
     def name(self):
@@ -447,90 +293,29 @@ class Clan:
 
     @property
     def donations(self):
+        if not self.exists:
+            return None
         return self.data['donations']
 
     @property
     def rank(self):
-        if self.data['currentRank'] == 0:
+        if self.data['currentRank'] == 0 or not self.exists:
             return None
         return self.data['currentRank']
 
     @property
     def description(self):
+        if not self.exists:
+            return None
         return self.data['description']
 
     @property
     def region(self):
+        if not self.exists:
+            return None
         return self.data['region']['name']
 
 
-
-class Card:
-
-    def __init__(self, key):
-        self.key = key
-        data = requests.get("https://api.cr-api.com/constants").json()
-        card_found = False
-        for test_card in data['cards']:
-            if self.key == test_card['key']:
-                self.data = test_card
-                card_found = True
-        if not card_found:
-            self.data = None
-
-    @property
-    def exists(self):
-        if self.data == None:
-            return False
-        return True
-
-    @property
-    def name(self):
-        if not self.exists:
-            return None
-        return self.data['name']
-
-    @property
-    def elixir(self):
-        if not self.exists:
-            return None
-        return self.data['elixir']
-
-    @property
-    def type(self):
-        if not self.exists:
-            return None
-        return self.data['type']
-
-    @property
-    def rarity(self):
-        if not self.exists:
-            return None
-        return self.data['rarity']
-
-    @property
-    def arena_found(self):
-        if not self.exists:
-            return None
-        return self.data['arena']
-
-    @property
-    def description(self):
-        if not self.exists:
-            return None
-        return self.data['description']
-
-    @property
-    def card_id(self):
-        if not self.exists:
-            return None
-        return self.data['decklink']
-
-    @property
-    def img_url(self):
-        if not self.exists:
-            return None
-        return "https://raw.githubusercontent.com/cr-api/cr-api-assets/master/card/{}.png".format(self.key)
 
 class Profiles:
 
@@ -541,3 +326,79 @@ class Clans:
 
     def __init__(self, *tags: str):
         self.clans = [Clan(tag) for tag in tags]
+
+class Constants:
+
+    def __init__(self):
+        self.data = requests.get("http://api.cr-api.com/constants").json()
+        self.badges = self.data['badges']
+        self.chest_cycle = self.data['chestCycle']
+        countries = []
+        for country in self.data['countryCodes']:
+            if country['isCountry'] == "false":
+                countries.append({"is_country": False, "name": country['name']})
+        self.countries = countries
+
+    class Arena:
+
+        def __init__(self, data):
+            self.arena = data['arena']
+            self.name = data['name']
+            self.trophies_required = data['trophyLimit']
+            self.id = data['arenaID']
+            self.img_url = "http://api.cr-api.com/arena/{}.png".format(self.arena.replace(" ", "").lower())
+
+    class Card:
+
+        def __init__(self, data):
+            self.key = data['key']
+            self.name = data['name']
+            self.elixir = data['elixir']
+            self.type = data['type']
+            self.rarity = data['rarity']
+            self.arena_found = data['arena']
+            self.description = data['description']
+            self.card_id = data['card_id']
+            self.decklink = data['decklink']
+            self.img_url = "https://raw.githubusercontent.com/cr-api/cr-api-assets/master/card/{}.png".format(self.key)
+
+    class Alliance:
+
+        def __init__(self, data):
+            self.roles = data['roles']
+            self.types = data['types']
+
+    class Rarity:
+
+        def __init__(self, data):
+            self.name = data['name']
+            self.donate_capacity = data['donate_capacity']
+            self.donate_reward = data['donate_reward']
+            self.donate_xp = data['donate_xp']
+            self.gold_equivelant = data['gold_conversion_value']
+            self.level_count = data['level_count']
+            self.upgrade_cost = data['upgrade_cost']
+            self.upgrade_xp = data['upgrade_exp']
+            self.upgrade_cards = data['upgrade_material_count']
+
+    @property
+    def arena(self):
+        return [self.Arena(arena) for arena in self.data['arenas']]
+
+    @property
+    def card(self):
+        cards = {}
+        for card in self.data['cards']:
+            cards[card['key']] = self.Card(card)
+        return cards
+
+    @property
+    def alliance(self):
+        return self.Alliance(self.data['alliance'])
+
+    @property
+    def rarity(self):
+        rarities = {}
+        for rarity in self.data['rarities']:
+            rarities[rarity['name']] = self.Raritiy(rarity)
+        return rarities
