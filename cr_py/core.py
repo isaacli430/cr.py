@@ -82,7 +82,7 @@ class Profile:
         def __init__(self, data):
             self.found = data['stats']['cardsFound']
             self.tournament = data['stats']['tournamentCardsWon']
-            self.favorite = Constants().card[self.data['stats']['favoriteCard']]
+            self.favorite = Constants().card[data['stats']['favoriteCard'].replace("_", "-")]
             self.challenge = data['stats']['challengeCardsWon']
 
     class Games:
@@ -214,7 +214,7 @@ class Profile:
             return None
         deck = []
         for card in self.data['currentDeck']:
-            deck.append((Constants().card[card['key']], card['level']))
+            deck.append((Constants().card[card['key'].replace("_", "-")], card['level']))
         return deck
 
 class Clan:
