@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='cr-py',
-    version='1.2.1',
+    version='1.2.2',
     description='A Python API wrapper for cr-api',
     long_description='A Python API wrapper for cr-api',
     url='https://github.com/kwugfighter/cr.py',

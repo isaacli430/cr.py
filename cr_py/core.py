@@ -55,7 +55,7 @@ class Profile:
     class Cycles:
 
         def __init__(self, data):
-            self.chest_pos = data['chestCycle']['chest_position']
+            self.chest_pos = data['chestCycle']['position']
             self.smc_pos = data['chestCycle']['superMagicalPos']
             self.leg_pos = data['chestCycle']['legendaryPos']
             self.epic_pos = data['chestCycle']['epicPos']
@@ -171,7 +171,9 @@ class Profile:
     def clan(self):
         if not self.exists:
             return None
-        return Clan(self.data['clan']['tag']) or None
+        if self.data['clan'] == None:
+            return None
+        return Clan(self.data['clan']['tag'])
 
     @property
     def clan_chest_contrib(self):
@@ -300,7 +302,7 @@ class Clan:
     def badge_url(self):
         if not self.exists:
             return None
-        return "api.cr-api.com/{0}".format(self.data['badge']['url'])
+        return "http://api.cr-api.com{}".format(self.data['badge']['url'])
 
     @property
     def type(self):
