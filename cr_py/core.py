@@ -32,6 +32,12 @@ class Profile:
         else:
             self.data = json
 
+    def __repr__(self):
+        return "<Profile: #{}>".format(self.tag)
+
+    def __str__(self):
+        return "#{}".format(self.tag)
+
     @property
     def update(self):
         json = requests.get("http://api.cr-api.com/profile/{}".format(self.tag)).json()
@@ -219,6 +225,12 @@ class Clan:
         else:
             self.data = data
 
+    def __repr__(self):
+        return "<Clan: #{}>".format(self.tag)
+
+    def __str__(self):
+        return "#{}".format(self.tag)
+
     @property
     def exists(self):
         if self.data == None:
@@ -235,37 +247,48 @@ class Clan:
     class ClanChest:
 
         def __init__(self, data):
-            self.data = data
-            self.required = data['clanChest']['clanChestCrownsRequired']
-            self.crowns = data['clanChest']['clanChestCrowns']
-            self.finished_percent = data['clanChest']['clanChestCrownsPercent']*100
-            self.contributions = [(i['name'], i['clanChestCrowns']) for i in self.data['members']]
+            self.required = data['clanChestCrownsRequired']
+            self.crowns = data['clanChestCrowns']
+            self.finished_percent = data['clanChestCrownsPercent']*100
 
     class Trophies:
 
         def __init__(self, data):
-            self.data = data
             self.current = data['score']
             self.requirement = data['requiredScore']
-            self.players = [(i['name'], i['trophies']) for i in self.data['members']]
+
+    class Member:
+
+        def __init__(self, data):
+            self.name = data['name']
+            self.arena = Constants().arena[data['arena']['arenaID']]
+            self.role = data['roleName']
+            self.xp = data['expLevel']
+            self.trophies = data['trophies']
+            self.donations = data['donations']
+            self.current_rank = data['currentRank']
+            self.previous_rank = data['previousRank']
+            self.crowns = data['clanChestCrowns']
+            self.tag = data['tag']
+            self.profile = Profile(self.tag)
 
     @property
     def clanchest(self):
         if not self.exists:
             return None
-        return self.ClanChest(self.data)
+        return self.ClanChest(self.data['clanChest'])
 
     @property
     def trophies(self):
         if not self.exists:
             return None
-        return self.Trophies(self.data)
+        return self.Trophies(self.data['members'])
 
     @property
     def members(self):
         if not self.exists:
             return None
-        return [(x['name'], x['tag']) for x in self.data['members']]
+        return [self.Member(member) for member in self.data['members']]
 
     @property
     def name(self):
@@ -348,6 +371,12 @@ class Constants:
             self.id = data['arenaID']
             self.img_url = "http://api.cr-api.com/arena/{}.png".format(self.arena.replace(" ", "").lower())
 
+        def __repr__(self):
+            return "<Arena: {}>".format(self.id)
+
+        def __str__(self):
+            return self.arena
+
     class Card:
 
         def __init__(self, data):
@@ -361,6 +390,12 @@ class Constants:
             self.card_id = data['card_id']
             self.decklink = data['decklink']
             self.img_url = "https://raw.githubusercontent.com/cr-api/cr-api-assets/master/card/{}.png".format(self.key)
+
+        def __repr__(self):
+            return "<Card: {}>".format(self.name)
+
+        def __str__(self):
+            return self.name
 
     class Alliance:
 
@@ -380,6 +415,12 @@ class Constants:
             self.upgrade_cost = data['upgrade_cost']
             self.upgrade_xp = data['upgrade_exp']
             self.upgrade_cards = data['upgrade_material_count']
+
+        def __repr__(self):
+            return "<Rarity: {}>".format(self.name)
+
+        def __str__(self):
+            return self.name
 
     @property
     def arena(self):
