@@ -426,7 +426,8 @@ class Constants:
 
     @property
     def arena(self):
-        return [self.Arena(arena) for arena in self.data['arenas']]
+        train = {"arena": "Arena 0", "name": "Training Camp", "trophyLimit": 0, "arenaID": 0}
+        return [self.Arena(train)]+[self.Arena(arena) for arena in self.data['arenas']]
 
     @property
     def card(self):
